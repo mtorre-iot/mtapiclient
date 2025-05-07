@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "Q2n7BXhr5zxFDQ7PqBoD3hisp5TgeZDppkReh+5rVjE=",
+  "Source": "mtapiclient",
+  "BasePath": "_content/mtapiclient",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

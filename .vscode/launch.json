@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/mtapiclient/bin/Debug/net8.0/mtapiclient.dll",
+            "env": {
+                "CLIENT": "Client1",
+                "API_HOST": "localhost",
+                "API_SUFFIX": "api/v1",
+                "API_PROTOCOL": "http",
+                "API_PORT": "5236",
+                "TIME_PERIOD": "10",
+                "WH_HOST": "localhost",
+                "WH_SUFFIX": "api/v1",
+                "WH_PROTOCOL": "http",
+                "WH_PORT": "8002"
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}/mtapiclient",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
