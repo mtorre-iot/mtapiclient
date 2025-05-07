@@ -20,10 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var config = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
+var vars = new Vars().Init(config);
 
 builder.Host.UseSerilog((context, logConfig) => logConfig
     .ReadFrom.Configuration(context.Configuration));
 
+builder.Services.AddSingleton(vars);
 builder.Services.AddSingleton(config);
 //
 ///builder.Services.AddControllers();
@@ -51,13 +53,10 @@ ThreadPool.SetMinThreads(config.parameters.threadpool_min_size, config.parameter
 //
 logger.Information("Program()- Start SDKAPI client");
 Task<int> tsk = Task.Run(() => {
-    var task = new App(logger, config);
+    var task = new App(logger, vars, config);
     task.Main();
     return 0;
     });
-
-
-
 //
 // Configure the HTTP request pipeline.
 //

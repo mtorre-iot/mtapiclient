@@ -1,35 +1,23 @@
 {
     "Model": {
         "subscriptions": {
-            "liveValue.diagnostics.this.io.0.temperature." : {
+            "streamData.diagnostics.this.io.0.eu.fastAnalog|." : {
                "tags": {
                     "s_t1_var1": {
-                        "name": "cpu.",
-                        "type": "Float"
-                    }
-                },
-                "callback" : ""
-            },
-            "liveValue.diagnostics.this.core.0.temperature|." : {
-                "tags": {
-                    "s_t2_var1": {
-                        "name": "core0.",
+                        "name": "ch1.",
                         "type": "Float"
                     },
                     "s_t2_var2": {
-                        "name": "core1.",
+                        "name": "ch2.",
                         "type": "Float"
                     },
                     "s_t2_var3": {
-                        "name": "core2.",
-                        "type": "Float"
-                    },
-                    "s_t2_var4": {
-                        "name": "core3.",
+                        "name": "ch3.",
                         "type": "Float"
                     }
+
                 },
-                "callback" : "http://192.168.1.71:"
+                "callback" : "http://192.168.1.71:5202/webhook/v1/Push"
             }
         },
         "publications": {

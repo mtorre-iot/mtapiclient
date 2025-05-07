@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using mtapiclient.classes;
+using Newtonsoft.Json.Linq;
 
 namespace mtapiclient.Controllers;
 
@@ -10,11 +11,13 @@ namespace mtapiclient.Controllers;
 [Route("webhook/v1/[controller]")]
 public class TestController : ControllerBase
 {
-    private readonly ILogger<TestController> logger;
+    private readonly Serilog.ILogger logger;
     private readonly AppSettings config;
+    private readonly JObject vars;
 
-    public TestController(AppSettings config, ILogger<TestController> logger)
+    public TestController(JObject vars, AppSettings config, Serilog.ILogger logger)
     {
+        this.vars = vars;
         this.config = config;
         this.logger = logger;
     }

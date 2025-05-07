@@ -29,11 +29,12 @@ public class ApiClient
     private object webhook_queue {get; set;}
     private object logger {get; set;}
 
-    public ApiClient(AppSettings config)
+    public ApiClient(JObject vars, AppSettings config)
     {
         //
         // Initialize internal variables
         //
+        this.vars = vars;
         this.isConnected = false;
         this.config = config;   
         //
@@ -52,15 +53,15 @@ public class ApiClient
         //
         // let's read the variables file!
         //
-        string varFilePath = config.system.variable_file;
-        try
-        {
-            this.vars = CommonUtilities.ReadVars(varFilePath);
-        }
-        catch (Exception e)
-        {
-            throw new Exception($"Cannot read Variable configuration file. Program ABORTED. Error: {e}");
-        }
+        // string varFilePath = config.system.variable_file;
+        // try
+        // {
+        //     this.vars = CommonUtilities.ReadVars(varFilePath);
+        // }
+        // catch (Exception e)
+        // {
+        //     throw new Exception($"Cannot read Variable configuration file. Program ABORTED. Error: {e}");
+        // }
     }
 
     public async Task<Dictionary<bool, JObject>> Connect(bool openIfExists)

@@ -289,12 +289,47 @@ public class Vqt
     public int q {get; set;}
     public string qtext {get; set;}
     public string t {get; set;}
-    public Vqt(object value, Quality quality, DateTime timestamp)
+    public Vqt(object v, Quality q, DateTime t)
     {
-        this.v = value;
-        this.q = QualityConv.ConvertQualityToInt(quality);
-        this.qtext = QualityConv.ConvertTagQualityToString(quality);
-        DateTime utcTime = CommonUtilities.ConvertLocalTimeToUtc(timestamp);
+        this.v = v;
+        this.q = QualityConv.ConvertQualityToInt(q);
+        this.qtext = QualityConv.ConvertTagQualityToString(q);
+        DateTime utcTime = CommonUtilities.ConvertLocalTimeToUtc(t);
         this.t = CommonUtilities.ConvertTimestampToString(utcTime);
     }
+}
+
+public class PVqts
+{
+    public string tag {get; set;}
+    public string type {get; set;}
+    public PVqt vqt {get; set;}
+    public PVqts(string tag, string type, PVqt vqt)
+    {
+        this.tag = tag;
+        this.type = type;
+        this.vqt = vqt;
+    }
+}
+
+
+public class PVqt
+{
+    public object v {get; set;}
+    public int q {get; set;}
+    public string qtext {get; set;}
+    public string t {get; set;}
+    public PVqt(object v, int q, string qtext, string t)
+    {
+        this.v = v;
+        this.q = q;
+        this.qtext = qtext;
+        this.t = t;
+    }
+}
+
+public class Record
+{
+    public string topic {get ;set;}
+    public List<PVqts> vqts {get; set;}
 }

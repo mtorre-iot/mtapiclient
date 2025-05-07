@@ -8,12 +8,14 @@ namespace mtapiclient
 {
 class App
 {
+    private JObject vars;
     private AppSettings config;
     private Serilog.ILogger logger;
     
-    public App(Serilog.ILogger logger, AppSettings config)
+    public App(Serilog.ILogger logger, JObject vars, AppSettings config)
     {
         this.config = config;
+        this.vars = vars;
         this.logger = logger;
     }
     public async void Main()
@@ -26,7 +28,7 @@ class App
         
         // Create new Client
 
-        ApiClient client = new ApiClient(config);
+        ApiClient client = new ApiClient(vars, config);
 
         // add new API client 
 
@@ -103,85 +105,85 @@ class App
             //
             while (true)
             {
-                Dictionary<bool, JArray> result_array;  
+                // Dictionary<bool, JArray> result_array;  
 
-                string topicName = "liveValue.diagnostics.this.io.0.temperature.";
-                List<string>tagNames =  ["cpu."];
-                try
-                {
-                    result_array = await client.Read(topicName, tagNames);
-                    if (result_array.Keys.First() == true)
-                    {
-                        logger.Information($"Read Client: {client.client}, Topic: {topicName} Was successful.");
-                        IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
-                        foreach (JObject jo in jObjects)
-                        {
-                            logger.Information(jo.ToString());
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Error: Failed on Read.");
-                    }
-                }
-                catch (Exception e)
-                {
-                    logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
-                    Thread.Sleep(5000);
-                    continue;
-                }
-                //#########################################################################################
-                topicName = "liveValue.diagnostics.this.core.0.temperature|.";
-                tagNames =  ["core0.", "core1.", "core2.", "core3."];
-                try
-                {
-                    result_array = await client.Read(topicName, tagNames);
-                    if (result_array.Keys.First() == true)
-                    {
-                        logger.Information($"Read Client: {client.client}, Topic: {topicName} Was successful.");
-                        IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
-                        foreach (JObject jo in jObjects)
-                        {
-                            logger.Information(jo.ToString());
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Error: Failed on Read.");
-                    }
-                }
-                catch (Exception e)
-                {
-                    logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
-                    Thread.Sleep(5000);
-                    continue;
-                }
-                //#########################################################################################
-                topicName = "liveValue.production.this.modbus.0.server.tcp502.INT.HCC2Internals.";
-                string tag =  "RESULT.";
-                string type = "FLoat";
-                object value  = 55.18;
-                Quality quality = Quality.Good;
-                DateTime ts = DateTime.Now;
+                // string topicName = "liveValue.diagnostics.this.io.0.temperature.";
+                // List<string>tagNames =  ["cpu."];
+                // try
+                // {
+                //     result_array = await client.Read(topicName, tagNames);
+                //     if (result_array.Keys.First() == true)
+                //     {
+                //         logger.Information($"Read Client: {client.client}, Topic: {topicName} Was successful.");
+                //         IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
+                //         foreach (JObject jo in jObjects)
+                //         {
+                //             logger.Information(jo.ToString());
+                //         }
+                //     }
+                //     else
+                //     {
+                //         throw new Exception("Error: Failed on Read.");
+                //     }
+                // }
+                // catch (Exception e)
+                // {
+                //     logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
+                //     Thread.Sleep(5000);
+                //     continue;
+                // }
+                // //#########################################################################################
+                // topicName = "liveValue.diagnostics.this.core.0.temperature|.";
+                // tagNames =  ["core0.", "core1.", "core2.", "core3."];
+                // try
+                // {
+                //     result_array = await client.Read(topicName, tagNames);
+                //     if (result_array.Keys.First() == true)
+                //     {
+                //         logger.Information($"Read Client: {client.client}, Topic: {topicName} Was successful.");
+                //         IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
+                //         foreach (JObject jo in jObjects)
+                //         {
+                //             logger.Information(jo.ToString());
+                //         }
+                //     }
+                //     else
+                //     {
+                //         throw new Exception("Error: Failed on Read.");
+                //     }
+                // }
+                // catch (Exception e)
+                // {
+                //     logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
+                //     Thread.Sleep(5000);
+                //     continue;
+                // }
+                // //#########################################################################################
+                // topicName = "liveValue.production.this.modbus.0.server.tcp502.INT.HCC2Internals.";
+                // string tag =  "RESULT.";
+                // string type = "FLoat";
+                // object value  = 55.18;
+                // Quality quality = Quality.Good;
+                // DateTime ts = DateTime.Now;
 
-                try
-                {
-                    result = await client.Publish(topicName, tag, type, value, quality, ts);
-                    if (result_array.Keys.First() == true)
-                    {
-                        logger.Information($"Publish Client: {client.client}, Topic: {topicName}, Tag: {tag}, Value: {value} Was successful.");
-                    }
-                    else
-                    {
-                        throw new Exception("Error: Failed on Publish");
-                    }
-                }
-                catch (Exception e)
-                {
-                    logger.Error($"Client couldn't be able to publish to topic: {topicName}. Error: {e}. Retrying.");
-                    Thread.Sleep(5000);
-                    continue;
-                }
+                // try
+                // {
+                //     result = await client.Publish(topicName, tag, type, value, quality, ts);
+                //     if (result_array.Keys.First() == true)
+                //     {
+                //         logger.Information($"Publish Client: {client.client}, Topic: {topicName}, Tag: {tag}, Value: {value} Was successful.");
+                //     }
+                //     else
+                //     {
+                //         throw new Exception("Error: Failed on Publish");
+                //     }
+                // }
+                // catch (Exception e)
+                // {
+                //     logger.Error($"Client couldn't be able to publish to topic: {topicName}. Error: {e}. Retrying.");
+                //     Thread.Sleep(5000);
+                //     continue;
+                // }
                 Thread.Sleep(10000); // Test   
             }
         }
