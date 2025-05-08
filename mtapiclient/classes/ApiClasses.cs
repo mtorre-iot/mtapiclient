@@ -100,6 +100,27 @@ public class SubscriptionQuery : BaseQuery
         string payloadStr = JsonConvert.SerializeObject(payload);
         return payloadStr;
     }
+    public async Task<Dictionary<bool, JArray>> GetRequest(string url, string operation, Dictionary<string, string> headers, string payload, bool response_required)
+    {
+        using (HttpClient client = new HttpClient()) 
+        {
+            var content = new StringContent(payload, Encoding.UTF8, headers.Values.First());
+            var request = new HttpRequestMessage(CommonUtilities.GetHttpMethod(operation), url)
+            {
+                Content = content
+            };
+
+            HttpResponseMessage response = await client.SendAsync(request);
+            string responseBody = await response.Content.ReadAsStringAsync();
+            JArray jsonData = null;
+
+            if (responseBody != String.Empty)
+            {
+                jsonData = JArray.Parse(responseBody);
+            }
+            return new Dictionary<bool, JArray>() {{response.IsSuccessStatusCode, jsonData }};
+        }
+    }
 }
 
 public class SubscriptionReadQuery : BaseQuery

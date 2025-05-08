@@ -122,6 +122,43 @@ public class ApiClient
         }; 
     }
 
+    public async Task<Dictionary<bool, JArray>> GetSubscriptions()
+    {
+        SubscriptionQuery subscriptionQuery = new SubscriptionQuery();
+        string command = config.api.get_subscriptions.command;
+        string url = subscriptionQuery.Build_url(api_protocol, api_host, api_port, api_suffix, command, String.Empty, $"clientName={client}");
+
+        string header_type = config.api.get_subscriptions.header_type;       
+        string header = config.api.get_subscriptions.header;    
+        Dictionary<string, string> headers = subscriptionQuery.Build_headers(header_type, header);
+        string operation = config.api.get_subscriptions.operation;     
+        bool response_required = config.api.get_subscriptions.response_required;     
+        Dictionary<bool, JArray> response = await subscriptionQuery.GetRequest(url, operation, headers, String.Empty, response_required);
+        
+        return new Dictionary<bool, JArray> {
+            {response.Keys.First(), response.Values.First()}
+        };
+    }
+
+public async Task<Dictionary<bool, JObject>> DeleteSubscription(string topic)
+    {
+        SubscriptionQuery subscriptionQuery = new SubscriptionQuery();
+        string command = config.api.delete_subscription.command;
+        string url = subscriptionQuery.Build_url(api_protocol, api_host, api_port, api_suffix, command, topic, $"clientName={client}");
+
+        string header_type = config.api.delete_subscription.header_type;
+        string header = config.api.delete_subscription.header;    
+        Dictionary<string, string> headers = subscriptionQuery.Build_headers(header_type, header);
+
+        string operation = config.api.delete_subscription.operation;     
+        bool response_required = config.api.delete_subscription .response_required;     
+        Dictionary<bool, JObject> response = await subscriptionQuery.Request(url, operation, headers, String.Empty, response_required);
+        
+        return new Dictionary<bool, JObject> {
+            {response.Keys.First(), response.Values.First()}
+        };
+    }
+
     public async Task<Dictionary<bool, JObject>> SubscriptionTopics(bool overrideIfExists)
     {
         SubscriptionQuery subscriptionQuery = new SubscriptionQuery();

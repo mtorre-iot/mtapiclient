@@ -58,6 +58,8 @@ namespace mtapiclient.classes
         public ApiParam set_connection {get; set;}
         public ApiParam get_all_connections {get; set;}
         public ApiParam delete_connection {get; set;}
+        public ApiParam get_subscriptions {get; set;} 
+        public ApiParam delete_subscription {get; set;} 
         public ApiParam set_subscription {get; set;} 
         public ApiParam set_publication {get; set;}
         public ApiParam set_subscription_read {get; set;}

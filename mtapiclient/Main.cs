@@ -38,7 +38,9 @@ class App
         //
         while (true)
         {
-
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// Disconnect Client 
+            /// 
             Dictionary<bool, JObject> result = null;    
             try
             {
@@ -50,6 +52,9 @@ class App
             }
             logger.Information($"Client {client.client} diconnected.");
 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// Connect Client 
+            /// 
             try
             {
                 result = await client.Connect(true);
@@ -61,7 +66,61 @@ class App
                 continue;
             }
             logger.Information($"Client: {client.client} Connected.");
-
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// Get All current subscriptions
+            ///
+            Dictionary<bool, JArray> result_array; 
+            List<string> existing_topics = new List<string>();
+            try
+            {
+                result_array = await client.GetSubscriptions();
+                if (result_array.Keys.First() == true)
+                {
+                    logger.Information($"Get all subscriptions for Client: {client.client} Was successful.");
+                    IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
+                        foreach (JObject jo in jObjects)
+                        {
+                           existing_topics.Add((string)jo["topic"]);
+                        }
+                }
+                else
+                {
+                    throw new Exception("Error: GetSubscription Failed.");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error($"Client couldn't be able to get subscriptions list. Error: {e}. Trying to reconnect.");
+                Thread.Sleep(5000);
+                continue;
+            }
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// Delete subscriptions 
+            /// 
+            foreach (string topic in existing_topics)
+            {
+                try
+                {
+                    result = await client.DeleteSubscription(topic);
+                    if (result.Keys.First() == true)
+                    {
+                        logger.Information($"Subscription for Topic:{topic} - Client: {client.client} Was successful.");
+                    }
+                    else
+                    {
+                        throw new Exception("Error: Failed Delete Subscription.");
+                    }
+                }
+                catch (Exception e)
+                {
+                    logger.Error($"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
+                    Thread.Sleep(5000);
+                    continue;
+                }
+            }
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// Subscribe Topics (vars.json) 
+            /// 
             try
             {
                 result = await client.SubscriptionTopics(true);
@@ -80,7 +139,9 @@ class App
                 Thread.Sleep(5000);
                 continue;
             }
-
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// Set Publication Topics (vars.json) 
+            /// 
             try
             {
                 result = await client.PublicationTopics(true);
@@ -105,6 +166,9 @@ class App
             //
             while (true)
             {
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //// Read Topic / Tags 
+                //// 
                 // Dictionary<bool, JArray> result_array;  
 
                 // string topicName = "liveValue.diagnostics.this.io.0.temperature.";
@@ -132,7 +196,9 @@ class App
                 //     Thread.Sleep(5000);
                 //     continue;
                 // }
-                // //#########################################################################################
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //// Read Topic / Tags 
+                //// 
                 // topicName = "liveValue.diagnostics.this.core.0.temperature|.";
                 // tagNames =  ["core0.", "core1.", "core2.", "core3."];
                 // try
@@ -158,7 +224,9 @@ class App
                 //     Thread.Sleep(5000);
                 //     continue;
                 // }
-                // //#########################################################################################
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////
+                /// Publish Topic / Tag / Value
+                /// 
                 // topicName = "liveValue.production.this.modbus.0.server.tcp502.INT.HCC2Internals.";
                 // string tag =  "RESULT.";
                 // string type = "FLoat";
