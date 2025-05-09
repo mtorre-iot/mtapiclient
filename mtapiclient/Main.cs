@@ -3,17 +3,23 @@ using Serilog;
 using Microsoft.Extensions.Configuration;
 using mtapiclient.classes;
 using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
+using mtapiclient.common;
 
 namespace mtapiclient
 {
 class App
 {
+    private CycleTimer cycleTimer;
+    private ConcurrentQueue<Record> webhookQueue;
     private JObject vars;
     private AppSettings config;
     private Serilog.ILogger logger;
     
-    public App(Serilog.ILogger logger, JObject vars, AppSettings config)
+    public App(Serilog.ILogger logger, ConcurrentQueue<Record> webhookQueue, CycleTimer cycleTimer, JObject vars, AppSettings config)
     {
+        this.cycleTimer = cycleTimer;
+        this.webhookQueue = webhookQueue;
         this.config = config;
         this.vars = vars;
         this.logger = logger;
@@ -36,7 +42,7 @@ class App
         //
         // OUTER LOOP
         //
-        while (true)
+        while (true)       
         {
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
             /// Disconnect Client 
@@ -62,7 +68,7 @@ class App
             catch (Exception e)
             {
                 logger.Error($"Client couldn't be able to connect with API server. Error: {e}. Trying to reconnect.");
-                Thread.Sleep(5000);
+                Thread.Sleep(config.misc.retry_time);
                 continue;
             }
             logger.Information($"Client: {client.client} Connected.");
@@ -91,7 +97,7 @@ class App
             catch (Exception e)
             {
                 logger.Error($"Client couldn't be able to get subscriptions list. Error: {e}. Trying to reconnect.");
-                Thread.Sleep(5000);
+                Thread.Sleep(config.misc.retry_time);
                 continue;
             }
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +120,7 @@ class App
                 catch (Exception e)
                 {
                     logger.Error($"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
-                    Thread.Sleep(5000);
+                    Thread.Sleep(config.misc.retry_time);
                     continue;
                 }
             }
@@ -136,7 +142,7 @@ class App
             catch (Exception e)
             {
                 logger.Error($"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
-                Thread.Sleep(5000);
+                Thread.Sleep(config.misc.retry_time);
                 continue;
             }
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,9 +163,15 @@ class App
             catch (Exception e)
             {
                 logger.Error($"Client couldn't be able to set publication to topics. Error: {e}. Trying to reconnect.");
-                Thread.Sleep(5000);
+                Thread.Sleep(config.misc.retry_time);
                 continue;
             }
+            //#########################################################################################################
+            //
+            // Setup Duty Cycle Timer
+            //
+            cycleTimer.Start(client.on_time, client.off_time);
+
             //#########################################################################################################
             //
             // INNER LOOP
@@ -193,7 +205,7 @@ class App
                 // catch (Exception e)
                 // {
                 //     logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
-                //     Thread.Sleep(5000);
+                //     Thread.Sleep(config.misc.retry_time);
                 //     continue;
                 // }
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +233,7 @@ class App
                 // catch (Exception e)
                 // {
                 //     logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
-                //     Thread.Sleep(5000);
+                //     Thread.Sleep(config.misc.retry_time);
                 //     continue;
                 // }
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,10 +261,42 @@ class App
                 // catch (Exception e)
                 // {
                 //     logger.Error($"Client couldn't be able to publish to topic: {topicName}. Error: {e}. Retrying.");
-                //     Thread.Sleep(5000);
+                //     Thread.Sleep(config.misc.retry_time);
                 //     continue;
                 // }
-                Thread.Sleep(10000); // Test   
+                //
+                // Dequeue messages from Webhook Queue
+                //
+                while (true)
+                {  
+                    try
+                    {
+                        if (webhookQueue.TryDequeue(out Record record) == true)
+                        {
+                            logger.Warning($"Topic: {record.topic}");
+                            foreach (PVqts vqts in record.vqts)
+                            {
+                                logger.Warning($"----vqts");
+                                logger.Warning($"--------tag:  {vqts.tag}");
+                                logger.Warning($"--------type:  {vqts.type}");
+                                logger.Warning($"------------v:  {vqts.vqt.v}");
+                                logger.Warning($"------------q:  {vqts.vqt.q}");
+                                logger.Warning($"------------t:  {vqts.vqt.t}");
+                                logger.Warning("");
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error($"Error trying to dequeue a message. Error: {e}.");
+                        break;
+                    }
+                }
+                Thread.Sleep(config.misc.dequeue_loop_time);
             }
         }
     }

@@ -20,7 +20,9 @@
                 "WH_HOST": "localhost",
                 "WH_SUFFIX": "api/v1",
                 "WH_PROTOCOL": "http",
-                "WH_PORT": "8002"
+                "WH_PORT": "8002",
+                "ON_TIME": "5000",
+                "OFF_TIME": "10000",
             },
             "args": [],
             "cwd": "${workspaceFolder}/mtapiclient",

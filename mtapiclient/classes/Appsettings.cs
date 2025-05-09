@@ -8,6 +8,7 @@ namespace mtapiclient.classes
         public System system { get; set;}
         public AppParams app {get; set;}
         public EnvParams env {get; set;}
+        public MiscParams misc {get; set;}
         public ApiParams api {get; set;}
         public GenParams parameters {get; set;}
     }
@@ -30,6 +31,8 @@ namespace mtapiclient.classes
         public string webhook_suffix {get; set;}
         public string webhook_port {get; set;}
         public string webhook_level {get; set;}
+        public string on_time {get; set;}
+        public string off_time {get; set;}
     } 
     public class EnvParams 
     {
@@ -43,8 +46,15 @@ namespace mtapiclient.classes
         public string webhook_suffix {get; set;}
         public string webhook_protocol {get; set;}
         public string webhook_port {get; set;}
+        public string on_time {get; set;}
+        public string off_time {get; set;}
     }
 
+    public class MiscParams
+    {
+        public int retry_time {get; set;}
+        public int dequeue_loop_time {get; set;}
+    }
     public class ApiParam 
     {
         public string command {get; set;}

@@ -1,8 +1,10 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using mtapiclient.classes;
+using mtapiclient.common;
 using Newtonsoft.Json.Linq;
 
 namespace mtapiclient.Controllers;
@@ -11,12 +13,16 @@ namespace mtapiclient.Controllers;
 [Route("webhook/v1/[controller]")]
 public class PushController : ControllerBase
 {
-    private readonly Serilog.ILogger logger;
+    private readonly CycleTimer cycleTimer;
+    private readonly ConcurrentQueue<Record> webhookQueue;
+    private readonly JObject vars;
     private readonly AppSettings config;
-        private readonly JObject vars;
-
-    public PushController(JObject vars, AppSettings config, Serilog.ILogger logger)
+    private readonly Serilog.ILogger logger;
+    
+    public PushController(CycleTimer cycleTimer, ConcurrentQueue<Record> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
     {
+        this.cycleTimer = cycleTimer;
+        this.webhookQueue = webhookQueue;
         this.vars = vars;
         this.config = config;
         this.logger = logger;
@@ -36,19 +42,13 @@ public class PushController : ControllerBase
                 return BadRequest(new {message = $"Topic {record.topic} not found. This and rest of records will be skipped."});            
             }
         }
-        foreach (Record record in records)
+        if (cycleTimer.isOn == true)
         {
-            logger.Information($"Topic: {record.topic}");
-            foreach (PVqts vqts in record.vqts)
+            foreach (Record record in records)
             {
-                logger.Information($"----vqts");
-                logger.Information($"--------tag:  {vqts.tag}");
-                logger.Information($"--------type:  {vqts.type}");
-                logger.Information($"------------v:  {vqts.vqt.v}");
-                logger.Information($"------------q:  {vqts.vqt.q}");
-                logger.Information($"------------t:  {vqts.vqt.t}");
-                logger.Information("");
+                // Push it to the queue
 
+                webhookQueue.Enqueue(record);
             }
         }
         return Ok (new {status = "OK"});

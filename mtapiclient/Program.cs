@@ -2,6 +2,8 @@ using Serilog;
 using mtapiclient.classes;
 using mtapiclient;
 using System.ComponentModel;
+using System.Collections.Concurrent;
+using mtapiclient.common;
 
 Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingContext, config) =>
@@ -21,11 +23,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
 var vars = new Vars().Init(config);
+var webhookQueue = new ConcurrentQueue<Record>();
+var cycleTimer = new CycleTimer();
 
 builder.Host.UseSerilog((context, logConfig) => logConfig
     .ReadFrom.Configuration(context.Configuration));
 
+builder.Services.AddSingleton(cycleTimer);
 builder.Services.AddSingleton(vars);
+builder.Services.AddSingleton(webhookQueue);
 builder.Services.AddSingleton(config);
 //
 ///builder.Services.AddControllers();
@@ -53,7 +59,7 @@ ThreadPool.SetMinThreads(config.parameters.threadpool_min_size, config.parameter
 //
 logger.Information("Program()- Start SDKAPI client");
 Task<int> tsk = Task.Run(() => {
-    var task = new App(logger, vars, config);
+    var task = new App(logger, webhookQueue, cycleTimer, vars, config);
     task.Main();
     return 0;
     });

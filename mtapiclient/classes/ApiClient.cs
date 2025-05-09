@@ -23,8 +23,8 @@ public class ApiClient
     private int time_period {get; set;}
     private AppSettings config {get; set;}
     public JObject vars {get; set;}
-    private object forward_vars {get; set;}
-    private object reverse_vars {get; set;}
+    public int on_time {get; set;}
+    public int off_time {get; set;}
     private bool isConnected {get; set;}
     private object webhook_queue {get; set;}
     private object logger {get; set;}
@@ -50,6 +50,12 @@ public class ApiClient
         this.wh_protocol = CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_protocol, config.app.webhook_protocol);
         this.wh_suffix = CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_suffix, config.app.webhook_suffix);
         this.wh_port = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_port, config.app.webhook_port));
+        this.on_time = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.on_time, config.app.on_time));
+        int min_on_time = Convert.ToInt32(config.app.on_time);
+        if (this.on_time < min_on_time) {this.on_time = Convert.ToInt32(config.app.on_time);}
+        this.off_time = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.off_time, config.app.off_time));
+        int min_off_time = Convert.ToInt32(config.app.off_time);
+        if (this.off_time < min_off_time) {this.off_time = Convert.ToInt32(config.app.off_time);}
         //
         // let's read the variables file!
         //
