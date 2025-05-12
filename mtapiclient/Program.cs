@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
 var vars = new Vars().Init(config);
-var webhookQueue = new ConcurrentQueue<Record>();
+var webhookQueue = new ConcurrentQueue<List<Record>>();
 var cycleTimer = new CycleTimer();
 
 builder.Host.UseSerilog((context, logConfig) => logConfig

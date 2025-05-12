@@ -3,19 +3,30 @@
         "subscriptions": {
             "streamData.diagnostics.this.io.0.eu.fastAnalog|." : {
                "tags": {
-                    "s_t1_var1": {
+                    "var1": {
                         "name": "ch1.",
                         "type": "Float"
                     },
-                    "s_t2_var2": {
+                    "var2": {
                         "name": "ch2.",
                         "type": "Float"
                     },
-                    "s_t2_var3": {
+                    "var3": {
                         "name": "ch3.",
                         "type": "Float"
+                    },
+                    "var4": {
+                        "name": "ch4.",
+                        "type": "Float"
+                    },
+                    "var5": {
+                        "name": "ch5.",
+                        "type": "Float"
+                    },
+                    "var6": {
+                        "name": "ch6.",
+                        "type": "Float"
                     }
-
                 },
                 "callback" : "http://192.168.1.71:5202/webhook/v1/Push"
             }

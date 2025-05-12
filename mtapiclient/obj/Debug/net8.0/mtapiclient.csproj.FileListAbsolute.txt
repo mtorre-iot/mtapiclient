@@ -64,3 +64,4 @@
 /home/sensia/mtapi/mtapiclient/mtapiclient/obj/Debug/net8.0/mtapiclient.sourcelink.json
 /home/sensia/mtapi/mtapiclient/mtapiclient/bin/Debug/net8.0/vars_fast_analogs.json
 /home/sensia/mtapi/mtapiclient/mtapiclient/bin/Debug/net8.0/vars_standard.json
+/home/sensia/mtapi/mtapiclient/mtapiclient/bin/Debug/net8.0/vars_fast_analogs_2.json

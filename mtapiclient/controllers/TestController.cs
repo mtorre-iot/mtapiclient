@@ -14,12 +14,12 @@ namespace mtapiclient.Controllers;
 public class TestController : ControllerBase
 {
     private readonly CycleTimer cycleTimer;
-    private readonly ConcurrentQueue<Record> webhookQueue;
+    private readonly ConcurrentQueue<List<Record>> webhookQueue;
     private readonly Serilog.ILogger logger;
     private readonly AppSettings config;
     private readonly JObject vars;
 
-    public TestController(CycleTimer cycleTimer, ConcurrentQueue<Record> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
+    public TestController(CycleTimer cycleTimer, ConcurrentQueue<List<Record>> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
     {
         this.cycleTimer = cycleTimer;
         this.webhookQueue = webhookQueue;

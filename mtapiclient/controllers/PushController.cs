@@ -14,12 +14,12 @@ namespace mtapiclient.Controllers;
 public class PushController : ControllerBase
 {
     private readonly CycleTimer cycleTimer;
-    private readonly ConcurrentQueue<Record> webhookQueue;
+    private readonly ConcurrentQueue<List<Record>> webhookQueue;
     private readonly JObject vars;
     private readonly AppSettings config;
     private readonly Serilog.ILogger logger;
     
-    public PushController(CycleTimer cycleTimer, ConcurrentQueue<Record> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
+    public PushController(CycleTimer cycleTimer, ConcurrentQueue<List<Record>> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
     {
         this.cycleTimer = cycleTimer;
         this.webhookQueue = webhookQueue;
@@ -42,14 +42,10 @@ public class PushController : ControllerBase
                 return BadRequest(new {message = $"Topic {record.topic} not found. This and rest of records will be skipped."});            
             }
         }
+        
         if (cycleTimer.isOn == true)
-        {
-            foreach (Record record in records)
-            {
-                // Push it to the queue
-
-                webhookQueue.Enqueue(record);
-            }
+        {        
+            webhookQueue.Enqueue(records); 
         }
         return Ok (new {status = "OK"});
     }

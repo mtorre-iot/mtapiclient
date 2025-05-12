@@ -11,12 +11,12 @@ namespace mtapiclient
 class App
 {
     private CycleTimer cycleTimer;
-    private ConcurrentQueue<Record> webhookQueue;
+    private ConcurrentQueue<List<Record>> webhookQueue;
     private JObject vars;
     private AppSettings config;
     private Serilog.ILogger logger;
     
-    public App(Serilog.ILogger logger, ConcurrentQueue<Record> webhookQueue, CycleTimer cycleTimer, JObject vars, AppSettings config)
+    public App(Serilog.ILogger logger, ConcurrentQueue<List<Record>> webhookQueue, CycleTimer cycleTimer, JObject vars, AppSettings config)
     {
         this.cycleTimer = cycleTimer;
         this.webhookQueue = webhookQueue;
@@ -271,19 +271,24 @@ class App
                 {  
                     try
                     {
-                        if (webhookQueue.TryDequeue(out Record record) == true)
+                        if (webhookQueue.TryDequeue(out List<Record> records) == true)
                         {
-                            logger.Warning($"Topic: {record.topic}");
-                            foreach (PVqts vqts in record.vqts)
+                            foreach (Record record in records)
                             {
-                                logger.Warning($"----vqts");
-                                logger.Warning($"--------tag:  {vqts.tag}");
-                                logger.Warning($"--------type:  {vqts.type}");
-                                logger.Warning($"------------v:  {vqts.vqt.v}");
-                                logger.Warning($"------------q:  {vqts.vqt.q}");
-                                logger.Warning($"------------t:  {vqts.vqt.t}");
-                                logger.Warning("");
+                                logger.Warning($"Topic: {record.topic}");
+                                foreach (PVqts vqts in record.vqts)
+                                {
+                                    logger.Warning($"----vqts");
+                                    logger.Warning($"--------tag:  {vqts.tag}");
+                                    logger.Warning($"--------type:  {vqts.type}");
+                                    logger.Warning($"------------v:  {vqts.vqt.v}");
+                                    logger.Warning($"------------q:  {vqts.vqt.q}");
+                                    logger.Warning($"------------t:  {vqts.vqt.t}");
+                                    logger.Warning("");
+                                }
                             }
+
+                            
                         }
                         else
                         {
