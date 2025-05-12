@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("mtapiclient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd8acf722698812e3d06ef5ec26f8d78439094fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2486f43ca4bda823b2e452f2f504ee2d3f8fc633")]
 [assembly: System.Reflection.AssemblyProductAttribute("mtapiclient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("mtapiclient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

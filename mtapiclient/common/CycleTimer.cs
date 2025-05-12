@@ -17,7 +17,7 @@ public class CycleTimer
     {
         this.on_time = on_time;
         this.off_time = off_time;
-        timer.Change(4 * off_time, Timeout.Infinite);
+        timer.Change(off_time, Timeout.Infinite);
         await WaitForever();        
     }
 
