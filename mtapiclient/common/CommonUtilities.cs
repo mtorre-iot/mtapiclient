@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Serilog;
 using System.Collections.Generic;
 
 //using HCC2EventManager.Common.TagCacheHandlers;
@@ -46,10 +45,10 @@ namespace mtapiclient.common
             int usedThreads = maxThreads - availThreads;
             int usedIOCThreads = maxIOCThreads - availIOCThreads;
 
-            Log.Debug($"ThreadPool - min: {minThreads}, minIOC: {minIOCThreads} | max: {maxThreads}, maxIOC: {maxIOCThreads} | avail: {availThreads}, availIOC: {availIOCThreads} | queued: {queuedCount} | used: {usedThreads}, usedIOC: {usedIOCThreads}");
+            Logger.write(logLevel.debug, $"ThreadPool - min: {minThreads}, minIOC: {minIOCThreads} | max: {maxThreads}, maxIOC: {maxIOCThreads} | avail: {availThreads}, availIOC: {availIOCThreads} | queued: {queuedCount} | used: {usedThreads}, usedIOC: {usedIOCThreads}");
 
             Process.GetCurrentProcess().Refresh();
-            Log.Debug($"ProcessThreadsCount: {Process.GetCurrentProcess().Threads.Count}");
+            Logger.write(logLevel.debug, $"ProcessThreadsCount: {Process.GetCurrentProcess().Threads.Count}");
         }
 
         public static List<string> RetrieveThreadInfo()
@@ -225,5 +224,6 @@ namespace mtapiclient.common
         {
             return timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
         }
+        
     }
 }

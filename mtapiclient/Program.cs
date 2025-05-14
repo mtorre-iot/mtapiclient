@@ -1,4 +1,3 @@
-using Serilog;
 using mtapiclient.classes;
 using mtapiclient;
 using System.ComponentModel;
@@ -19,15 +18,18 @@ Host.CreateDefaultBuilder(args)
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 var config = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
+
+Logger.AppName = config.system.appName;
+
+Logger.Init(config.system.log_level);
+
+// Add services to the container.
+
 var vars = new Vars().Init(config);
 var webhookQueue = new ConcurrentQueue<List<Record>>();
 var cycleTimer = new CycleTimer();
-
-builder.Host.UseSerilog((context, logConfig) => logConfig
-    .ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddSingleton(cycleTimer);
 builder.Services.AddSingleton(vars);
@@ -45,11 +47,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-Serilog.ILogger logger = app.Services.GetService<Serilog.ILogger>();
 //
 // Print Version
 //
-logger.Information($"Webhook API Version: {config.system.version}");
+Logger.write(logLevel.info, "APICLIENT - Version: " + config.system.version);
+
+Logger.write(logLevel.info,$"Webhook API Version: {config.system.version}");
 //
 // Setup Thread Pool
 //
@@ -57,9 +60,9 @@ ThreadPool.SetMinThreads(config.parameters.threadpool_min_size, config.parameter
 //
 // Start the ZMQ engine
 //
-logger.Information("Program()- Start SDKAPI client");
+Logger.write(logLevel.info,"Program()- Start SDKAPI client");
 Task<int> tsk = Task.Run(() => {
-    var task = new App(logger, webhookQueue, cycleTimer, vars, config);
+    var task = new App(webhookQueue, cycleTimer, vars, config);
     task.Main();
     return 0;
     });
@@ -72,15 +75,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-logger.Information("Program()- Map API Controllers");
+Logger.write(logLevel.info,"Program()- Map API Controllers");
 app.MapControllers();
-
-logger.Information("Program()- Start API Engine");
-logger.Information("Webhook API Started!");
+Logger.write(logLevel.info,"CLIENT Started!");
 
 app.Run();

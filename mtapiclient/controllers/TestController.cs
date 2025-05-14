@@ -15,17 +15,15 @@ public class TestController : ControllerBase
 {
     private readonly CycleTimer cycleTimer;
     private readonly ConcurrentQueue<List<Record>> webhookQueue;
-    private readonly Serilog.ILogger logger;
     private readonly AppSettings config;
     private readonly JObject vars;
 
-    public TestController(CycleTimer cycleTimer, ConcurrentQueue<List<Record>> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
+    public TestController(CycleTimer cycleTimer, ConcurrentQueue<List<Record>> webhookQueue, JObject vars, AppSettings config)
     {
         this.cycleTimer = cycleTimer;
         this.webhookQueue = webhookQueue;
         this.vars = vars;
         this.config = config;
-        this.logger = logger;
     }
     [HttpGet(Name = "Health")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]

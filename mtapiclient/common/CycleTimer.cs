@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using mtapiclient.classes;
 
 namespace mtapiclient.common;
 public class CycleTimer
@@ -18,6 +19,7 @@ public class CycleTimer
         this.on_time = on_time;
         this.off_time = off_time;
         timer.Change(off_time, Timeout.Infinite);
+        Logger.write(logLevel.warning, $"Initial OFF time: {off_time} milliseconds");
         await WaitForever();        
     }
 
@@ -33,11 +35,13 @@ public class CycleTimer
         {
             isOn = false;
             timer.Change(off_time, Timeout.Infinite); 
+            Logger.write(logLevel.warning, $"OFF time: {off_time} milliseconds");
         }
         else
         {
             isOn = true;
             timer.Change(on_time, Timeout.Infinite);
+            Logger.write(logLevel.warning, $"ON time: {on_time} milliseconds");
         }
     }
 }

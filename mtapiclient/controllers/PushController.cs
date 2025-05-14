@@ -17,15 +17,13 @@ public class PushController : ControllerBase
     private readonly ConcurrentQueue<List<Record>> webhookQueue;
     private readonly JObject vars;
     private readonly AppSettings config;
-    private readonly Serilog.ILogger logger;
     
-    public PushController(CycleTimer cycleTimer, ConcurrentQueue<List<Record>> webhookQueue, JObject vars, AppSettings config, Serilog.ILogger logger)
+    public PushController(CycleTimer cycleTimer, ConcurrentQueue<List<Record>> webhookQueue, JObject vars, AppSettings config)
     {
         this.cycleTimer = cycleTimer;
         this.webhookQueue = webhookQueue;
         this.vars = vars;
         this.config = config;
-        this.logger = logger;
     }
 
     [HttpPost(Name = "Push")]

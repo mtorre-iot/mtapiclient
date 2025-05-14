@@ -1,10 +1,10 @@
 using System;
-using Serilog;
 using Microsoft.Extensions.Configuration;
 using mtapiclient.classes;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using mtapiclient.common;
+using Newtonsoft.Json;
 
 namespace mtapiclient
 {
@@ -14,23 +14,21 @@ class App
     private ConcurrentQueue<List<Record>> webhookQueue;
     private JObject vars;
     private AppSettings config;
-    private Serilog.ILogger logger;
-    
-    public App(Serilog.ILogger logger, ConcurrentQueue<List<Record>> webhookQueue, CycleTimer cycleTimer, JObject vars, AppSettings config)
+ 
+    public App(ConcurrentQueue<List<Record>> webhookQueue, CycleTimer cycleTimer, JObject vars, AppSettings config)
     {
         this.cycleTimer = cycleTimer;
         this.webhookQueue = webhookQueue;
         this.config = config;
         this.vars = vars;
-        this.logger = logger;
     }
     public async void Main()
     {
-        logger.Information("HCC2 ZMQ API Engine Started");
+        Logger.write(logLevel.info,"HCC2 ZMQ API Engine Started");
         //
         // Print version
         //
-        logger.Information($"MTAPI Client version: {config.system.version}");
+        Logger.write(logLevel.info,$"MTAPI Client version: {config.system.version}");
         
         // Create new Client
 
@@ -54,9 +52,9 @@ class App
             }
             catch (Exception e)
             {
-                logger.Warning($"Client couldn't be disconnected. Error: {e}. Most likely client does not exist.");
+                Logger.write(logLevel.warning, $"Client couldn't be disconnected. Error: {e}. Most likely client does not exist.");
             }
-            logger.Information($"Client {client.client} diconnected.");
+            Logger.write(logLevel.info,$"Client {client.client} diconnected.");
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
             /// Connect Client 
@@ -67,11 +65,11 @@ class App
             }
             catch (Exception e)
             {
-                logger.Error($"Client couldn't be able to connect with API server. Error: {e}. Trying to reconnect.");
+                Logger.write(logLevel.error, $"Client couldn't be able to connect with API server. Error: {e}. Trying to reconnect.");
                 Thread.Sleep(config.misc.retry_time);
                 continue;
             }
-            logger.Information($"Client: {client.client} Connected.");
+            Logger.write(logLevel.info,$"Client: {client.client} Connected.");
             ////////////////////////////////////////////////////////////////////////////////////////////////////////
             /// Get All current subscriptions
             ///
@@ -82,7 +80,7 @@ class App
                 result_array = await client.GetSubscriptions();
                 if (result_array.Keys.First() == true)
                 {
-                    logger.Information($"Get all subscriptions for Client: {client.client} Was successful.");
+                    Logger.write(logLevel.info,$"Get all subscriptions for Client: {client.client} Was successful.");
                     IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
                         foreach (JObject jo in jObjects)
                         {
@@ -96,7 +94,7 @@ class App
             }
             catch (Exception e)
             {
-                logger.Error($"Client couldn't be able to get subscriptions list. Error: {e}. Trying to reconnect.");
+                Logger.write(logLevel.error, $"Client couldn't be able to get subscriptions list. Error: {e}. Trying to reconnect.");
                 Thread.Sleep(config.misc.retry_time);
                 continue;
             }
@@ -110,7 +108,7 @@ class App
                     result = await client.DeleteSubscription(topic);
                     if (result.Keys.First() == true)
                     {
-                        logger.Information($"Subscription for Topic:{topic} - Client: {client.client} Was successful.");
+                        Logger.write(logLevel.info,$"Subscription for Topic:{topic} - Client: {client.client} Was successful.");
                     }
                     else
                     {
@@ -119,7 +117,7 @@ class App
                 }
                 catch (Exception e)
                 {
-                    logger.Error($"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
+                    Logger.write(logLevel.error, $"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
                     Thread.Sleep(config.misc.retry_time);
                     continue;
                 }
@@ -132,7 +130,7 @@ class App
                 result = await client.SubscriptionTopics(true);
                 if (result.Keys.First() == true)
                 {
-                    logger.Information($"Topic subscription for Client: {client.client} Was successful.");
+                    Logger.write(logLevel.info,$"Topic subscription for Client: {client.client} Was successful.");
                 }
                 else
                 {
@@ -141,7 +139,7 @@ class App
             }
             catch (Exception e)
             {
-                logger.Error($"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
+                Logger.write(logLevel.error, $"Client couldn't be able to subscribe to topics. Error: {e}. Trying to reconnect.");
                 Thread.Sleep(config.misc.retry_time);
                 continue;
             }
@@ -153,7 +151,7 @@ class App
                 result = await client.PublicationTopics(true);
                 if (result.Keys.First() == true)
                 {
-                    logger.Information($"Topic Publication for Client: {client.client} Was successful.");
+                    Logger.write(logLevel.info,$"Topic Publication for Client: {client.client} Was successful.");
                 }
                 else
                 {
@@ -162,7 +160,7 @@ class App
             }
             catch (Exception e)
             {
-                logger.Error($"Client couldn't be able to set publication to topics. Error: {e}. Trying to reconnect.");
+                Logger.write(logLevel.error, $"Client couldn't be able to set publication to topics. Error: {e}. Trying to reconnect.");
                 Thread.Sleep(config.misc.retry_time);
                 continue;
             }
@@ -190,11 +188,11 @@ class App
                 //     result_array = await client.Read(topicName, tagNames);
                 //     if (result_array.Keys.First() == true)
                 //     {
-                //         logger.Information($"Read Client: {client.client}, Topic: {topicName} Was successful.");
+                //         Logger.write(logLevel.info,$"Read Client: {client.client}, Topic: {topicName} Was successful.");
                 //         IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
                 //         foreach (JObject jo in jObjects)
                 //         {
-                //             logger.Information(jo.ToString());
+                //             Logger.write(logLevel.info,jo.ToString());
                 //         }
                 //     }
                 //     else
@@ -204,7 +202,7 @@ class App
                 // }
                 // catch (Exception e)
                 // {
-                //     logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
+                //     Logger.write(logLevel.error, $"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
                 //     Thread.Sleep(config.misc.retry_time);
                 //     continue;
                 // }
@@ -218,11 +216,11 @@ class App
                 //     result_array = await client.Read(topicName, tagNames);
                 //     if (result_array.Keys.First() == true)
                 //     {
-                //         logger.Information($"Read Client: {client.client}, Topic: {topicName} Was successful.");
+                //         Logger.write(logLevel.info,$"Read Client: {client.client}, Topic: {topicName} Was successful.");
                 //         IEnumerable<JObject> jObjects = result_array.Values.First().Children<JObject>();
                 //         foreach (JObject jo in jObjects)
                 //         {
-                //             logger.Information(jo.ToString());
+                //             Logger.write(logLevel.info,jo.ToString());
                 //         }
                 //     }
                 //     else
@@ -232,7 +230,7 @@ class App
                 // }
                 // catch (Exception e)
                 // {
-                //     logger.Error($"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
+                //     Logger.write(logLevel.error, $"Client couldn't be able to read from topic: {topicName}. Error: {e}. Retrying.");
                 //     Thread.Sleep(config.misc.retry_time);
                 //     continue;
                 // }
@@ -251,7 +249,7 @@ class App
                 //     result = await client.Publish(topicName, tag, type, value, quality, ts);
                 //     if (result_array.Keys.First() == true)
                 //     {
-                //         logger.Information($"Publish Client: {client.client}, Topic: {topicName}, Tag: {tag}, Value: {value} Was successful.");
+                //         Logger.write(logLevel.info,$"Publish Client: {client.client}, Topic: {topicName}, Tag: {tag}, Value: {value} Was successful.");
                 //     }
                 //     else
                 //     {
@@ -260,7 +258,7 @@ class App
                 // }
                 // catch (Exception e)
                 // {
-                //     logger.Error($"Client couldn't be able to publish to topic: {topicName}. Error: {e}. Retrying.");
+                //     Logger.write(logLevel.error, $"Client couldn't be able to publish to topic: {topicName}. Error: {e}. Retrying.");
                 //     Thread.Sleep(config.misc.retry_time);
                 //     continue;
                 // }
@@ -273,22 +271,24 @@ class App
                     {
                         if (webhookQueue.TryDequeue(out List<Record> records) == true)
                         {
-                            foreach (Record record in records)
-                            {
-                                logger.Warning($"Topic: {record.topic}");
-                                foreach (PVqts vqts in record.vqts)
-                                {
-                                    logger.Warning($"----vqts");
-                                    logger.Warning($"--------tag:  {vqts.tag}");
-                                    logger.Warning($"--------type:  {vqts.type}");
-                                    logger.Warning($"------------v:  {vqts.vqt.v}");
-                                    logger.Warning($"------------q:  {vqts.vqt.q}");
-                                    logger.Warning($"------------t:  {vqts.vqt.t}");
-                                    logger.Warning("");
-                                }
-                            }
-
+                            //Logger.write(logLevel.warning, $"Records received: {records.Count}");
+                            int first_record = 0;
+                            //Logger.write(logLevel.warning, $"VQTS received in record {first_record+1}: {records[first_record].vqts.Count}");
+                            int first_vqts = 0;
+                            List<float> values_list = JsonConvert.DeserializeObject<List<float>>(records[first_record].vqts[first_vqts].vqt.v.ToString());
+                            Logger.write(logLevel.warning, $"Records received: {records.Count}, VQTS received in record {first_record+1}: {records[first_record].vqts.Count}, Values received in VQTS {first_vqts+1}: {values_list.Count}");
                             
+                                // Logger.write(logLevel.warning, $"Topic: {record.topic}");
+                                // foreach (PVqts vqts in record.vqts)
+                                // {
+                                //     Logger.write(logLevel.warning, $"----vqts");
+                                //     Logger.write(logLevel.warning, $"--------tag:  {vqts.tag}");
+                                //     Logger.write(logLevel.warning, $"--------type:  {vqts.type}");
+                                //     Logger.write(logLevel.warning, $"------------v:  {vqts.vqt.v}");
+                                //     Logger.write(logLevel.warning, $"------------q:  {vqts.vqt.q}");
+                                //     Logger.write(logLevel.warning, $"------------t:  {vqts.vqt.t}");
+                                //     Logger.write(logLevel.warning, "");
+                                // }
                         }
                         else
                         {
@@ -297,7 +297,7 @@ class App
                     }
                     catch (Exception e)
                     {
-                        logger.Error($"Error trying to dequeue a message. Error: {e}.");
+                        Logger.write(logLevel.error, $"Error trying to dequeue a message. Error: {e}.");
                         break;
                     }
                 }

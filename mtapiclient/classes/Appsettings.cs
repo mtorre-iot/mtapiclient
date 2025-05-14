@@ -15,7 +15,9 @@ namespace mtapiclient.classes
 
     public class System
     {
+        public string appName {get; set; }
         public string version { get; set; }
+        public string log_level {get; set; }
         public string variable_file {get; set;}
     }
     public class AppParams
