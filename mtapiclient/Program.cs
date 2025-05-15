@@ -1,6 +1,5 @@
 using mtapiclient.classes;
 using mtapiclient;
-using System.ComponentModel;
 using System.Collections.Concurrent;
 using mtapiclient.common;
 
@@ -17,7 +16,14 @@ Host.CreateDefaultBuilder(args)
     });
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft.AspNetCore", LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Mvc", LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Hosting.Lifetime", LogLevel.Warning);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Hosting.Diagnostics", LogLevel.Warning);
 
 var config = builder.Configuration.GetSection("AppSettings").Get<AppSettings>();
 

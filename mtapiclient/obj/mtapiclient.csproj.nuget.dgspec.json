@@ -46,21 +46,9 @@
               "target": "Package",
               "version": "[13.0.3, )"
             },
-            "Serilog.AspNetCore": {
-              "target": "Package",
-              "version": "[9.0.0, )"
-            },
-            "Serilog.Expressions": {
-              "target": "Package",
-              "version": "[5.0.0, )"
-            },
-            "Serilog.Sinks.Seq": {
-              "target": "Package",
-              "version": "[9.0.0, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[8.1.1, )"
             }
           },
           "imports": [

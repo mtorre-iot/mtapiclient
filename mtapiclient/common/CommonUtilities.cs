@@ -1,12 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Collections.Generic;
-
-//using HCC2EventManager.Common.TagCacheHandlers;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using mtapiclient.classes;
 
