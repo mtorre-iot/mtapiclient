@@ -57,16 +57,18 @@ var app = builder.Build();
 // Print Version
 //
 Logger.write(logLevel.info, "APICLIENT - Version: " + config.system.version);
-
-Logger.write(logLevel.info,$"Webhook API Version: {config.system.version}");
 //
 // Setup Thread Pool
 //
 ThreadPool.SetMinThreads(config.parameters.threadpool_min_size, config.parameters.threadpool_min_size);
 //
+// Show current level
+//
+Logger.write(logLevel.info, $"Current Log Level is \"{ Logger.GetCurrentLevel()}\"");
+//
 // Start the ZMQ engine
 //
-Logger.write(logLevel.info,"Program()- Start SDKAPI client");
+Logger.write(logLevel.info,"Program()- Start APICLIENT client");
 Task<int> tsk = Task.Run(() => {
     var task = new App(webhookQueue, cycleTimer, vars, config);
     task.Main();

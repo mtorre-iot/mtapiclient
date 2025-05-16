@@ -79,6 +79,10 @@ public static class Logger
             }
         }
     }
+    public static string GetCurrentLevel()
+    {
+        return _level.ToString();
+    }
 
     /// <summary>
     /// Writes a log in sensia format

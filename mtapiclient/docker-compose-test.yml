@@ -18,7 +18,7 @@ services:
       - '5202:5202'
     environment:
       CLIENT: "Client1"
-      API_HOST: "mtApi"
+      API_HOST: "192.168.1.41"
       API_SUFFIX: "api/v1"
       API_PROTOCOL: "http"
       API_PORT: 5236
@@ -29,6 +29,7 @@ services:
       WH_PORT: 8002
       ON_TIME: 20000
       OFF_TIME: 20000
+      LOG_LEVEL: "info"
     tmpfs:
       - /tmp:uid=5678,gid=5678
 

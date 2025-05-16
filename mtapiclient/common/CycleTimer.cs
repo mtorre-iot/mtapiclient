@@ -18,9 +18,17 @@ public class CycleTimer
     {
         this.on_time = on_time;
         this.off_time = off_time;
-        timer.Change(off_time, Timeout.Infinite);
-        Logger.write(logLevel.warning, $"Initial OFF time: {off_time} milliseconds");
-        await WaitForever();        
+        if (on_time > 0 && off_time > 0)
+        {
+            timer.Change(off_time, Timeout.Infinite);
+            Logger.write(logLevel.warning, $"Initial OFF time: {off_time} milliseconds");
+            await WaitForever();
+        }
+        else
+        {
+            isOn = true; // Force it on
+            Logger.write(logLevel.warning, "$CycleTimer is disabled. Thread Ended.");
+        }
     }
 
     private Task WaitForever()

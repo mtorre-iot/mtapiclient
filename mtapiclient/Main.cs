@@ -25,11 +25,7 @@ class App
     public async void Main()
     {
         Logger.write(logLevel.info,"HCC2 ZMQ API Engine Started");
-        //
-        // Print version
-        //
-        Logger.write(logLevel.info,$"MTAPI Client version: {config.system.version}");
-        
+                
         // Create new Client
 
         ApiClient client = new ApiClient(vars, config);
@@ -269,31 +265,32 @@ class App
                 {  
                     try
                     {
-                        if (webhookQueue.TryDequeue(out List<Record> records) == true)
-                        {
-                            //Logger.write(logLevel.warning, $"Records received: {records.Count}");
-                            int first_record = 0;
-                            //Logger.write(logLevel.warning, $"VQTS received in record {first_record+1}: {records[first_record].vqts.Count}");
-                            int first_vqts = 0;
-                            List<float> values_list = JsonConvert.DeserializeObject<List<float>>(records[first_record].vqts[first_vqts].vqt.v.ToString());
-                            Logger.write(logLevel.warning, $"Records received: {records.Count}, VQTS received in record {first_record+1}: {records[first_record].vqts.Count}, Values received in VQTS {first_vqts+1}: {values_list.Count}");
-                            
-                                // Logger.write(logLevel.warning, $"Topic: {record.topic}");
-                                // foreach (PVqts vqts in record.vqts)
-                                // {
-                                //     Logger.write(logLevel.warning, $"----vqts");
-                                //     Logger.write(logLevel.warning, $"--------tag:  {vqts.tag}");
-                                //     Logger.write(logLevel.warning, $"--------type:  {vqts.type}");
-                                //     Logger.write(logLevel.warning, $"------------v:  {vqts.vqt.v}");
-                                //     Logger.write(logLevel.warning, $"------------q:  {vqts.vqt.q}");
-                                //     Logger.write(logLevel.warning, $"------------t:  {vqts.vqt.t}");
-                                //     Logger.write(logLevel.warning, "");
-                                // }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                            if (webhookQueue.TryDequeue(out List<Record> records) == true)
+                            {
+                                int first_record = 0;
+                                int first_vqts = 0;
+                                List<float> values_list = JsonConvert.DeserializeObject<List<float>>(records[first_record].vqts[first_vqts].vqt.v.ToString());
+                                Logger.write(logLevel.info, $"Records received: {records.Count}, Topic: {records[first_record].topic}, VQTS received in record {first_record + 1}: {records[first_record].vqts.Count}, Values received in VQTS {first_vqts + 1}: {values_list.Count}");
+                                foreach (Record record in records)
+                                {
+                                    foreach (PVqts vqts in record.vqts)
+                                    {
+                                        Logger.write(logLevel.info, $"Tag: {vqts.tag}, TS: {vqts.vqt.t}");
+
+                                        //     Logger.write(logLevel.warning, $"----vqts");
+                                        //     Logger.write(logLevel.warning, $"--------tag:  {vqts.tag}");
+                                        //     Logger.write(logLevel.warning, $"--------type:  {vqts.type}");
+                                        //     Logger.write(logLevel.warning, $"------------v:  {vqts.vqt.v}");
+                                        //     Logger.write(logLevel.warning, $"------------q:  {vqts.vqt.q}");
+                                        //     Logger.write(logLevel.warning, $"------------t:  {vqts.vqt.t}");
+                                        //     Logger.write(logLevel.warning, "");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
                     }
                     catch (Exception e)
                     {

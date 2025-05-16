@@ -22,7 +22,8 @@
                 "WH_PROTOCOL": "http",
                 "WH_PORT": "8002",
                 "ON_TIME": "20000",
-                "OFF_TIME": "20000",
+                "OFF_TIME": "0",
+                "LOG_LEVEL": "info"
             },
             "args": [],
             "cwd": "${workspaceFolder}/mtapiclient",
