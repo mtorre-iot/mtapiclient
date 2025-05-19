@@ -15,41 +15,40 @@ namespace mtapiclient.classes
 
     public class System
     {
-        public string appName {get; set; }
+        public string appName { get; set; }
         public string version { get; set; }
-        public string log_level {get; set; }
-        public string variable_file {get; set;}
+        public string log_level { get; set; }
+        public string variable_file { get; set; }
+        public int buffer_size { get; set; }
     }
     public class AppParams
     {
-        public string client {get; set;}
-        public string api_host {get; set;}
-        public string api_suffix {get; set;}
-        public string api_protocol {get; set;}
-        public string api_port  {get; set;}
-        public string time_period {get; set;}
-        public string webhook_host {get; set;}
-        public string webhook_protocol {get; set;}
-        public string webhook_suffix {get; set;}
-        public string webhook_port {get; set;}
-        public string webhook_level {get; set;}
-        public string on_time {get; set;}
-        public string off_time {get; set;}
-    } 
-    public class EnvParams 
+        public string client { get; set; }
+        public string api_host { get; set; }
+        public string api_suffix { get; set; }
+        public string api_protocol { get; set; }
+        public string api_port { get; set; }
+        public string time_period { get; set; }
+        public string webhook_host { get; set; }
+        public string webhook_protocol { get; set; }
+        public string webhook_suffix { get; set; }
+        public string webhook_port { get; set; }
+        public string webhook_level { get; set; }
+        public string on_time { get; set; }
+        public string off_time { get; set; }
+        public string interleave {get; set;}
+    }
+    public class EnvParams
     {
-        public string  client {get; set;}
-        public string api_host {get; set;}
-        public string api_suffix {get; set;}
-        public string api_protocol {get; set;}
-        public string api_port {get; set;}
-        public string time_period {get; set;}
-        public string webhook_host {get; set;}
-        public string webhook_suffix {get; set;}
-        public string webhook_protocol {get; set;}
-        public string webhook_port {get; set;}
-        public string on_time {get; set;}
-        public string off_time {get; set;}
+        public string client { get; set; }
+        public string api_host { get; set; }
+        public string api_suffix { get; set; }
+        public string api_protocol { get; set; }
+        public string api_port { get; set; }
+        public string time_period { get; set; }
+        public string on_time { get; set; }
+        public string off_time { get; set; }
+        public string interleave {get; set;}
     }
 
     public class MiscParams

@@ -10,14 +10,10 @@
                     "s_t2_var2": {
                         "name": "ch2.",
                         "type": "Float"
-                    },
-                    "s_t2_var3": {
-                        "name": "ch3.",
-                        "type": "Float"
                     }
 
                 },
-                "callback" : "http://192.168.1.71:5202/webhook/v1/Push"
+                "callback" : "http://mtApiClient:5202/webhook/v1/Push"
             }
         },
         "publications": {

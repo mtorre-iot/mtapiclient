@@ -209,7 +209,24 @@ namespace mtapiclient.common
             return topicObjects;
         }
 
-        public static DateTime ConvertLocalTimeToUtc (DateTime dt)
+        public static List<(string, string)> GetTopicTagPairsFromSubscription(JObject vars)
+        {
+            List<(string, string)> topicTagPairs = new List<(string, string)>();
+            JObject subscriptions = (JObject)vars["Model"]["subscriptions"];
+            List<(string, JObject)> subscriptionList = CommonUtilities.GetJsonObjects(subscriptions);
+            foreach (var (topicName, sub) in subscriptionList)
+            {
+                List<(string, JObject)> tagList = CommonUtilities.GetJsonObjects((JObject)sub["tags"]);
+                foreach (var (tn, tag) in tagList)
+                {
+                    var tagName = (string)tag["name"];
+                    topicTagPairs.Add((topicName, tagName));
+                }
+            }
+            return topicTagPairs;
+        }
+
+        public static DateTime ConvertLocalTimeToUtc(DateTime dt)
         {
             return dt.ToUniversalTime();
         }

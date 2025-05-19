@@ -11,19 +11,16 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/mtapiclient/bin/Debug/net8.0/mtapiclient.dll",
             "env": {
-                "CLIENT": "Client1",
+                "CLIENT": "Client1X",
                 "API_HOST": "192.168.1.41",
                 "API_SUFFIX": "api/v1",
                 "API_PROTOCOL": "http",
                 "API_PORT": "5236",
                 "TIME_PERIOD": "10",
-                "WH_HOST": "192.168.1.71",
-                "WH_SUFFIX": "api/v1",
-                "WH_PROTOCOL": "http",
-                "WH_PORT": "8002",
                 "ON_TIME": "20000",
                 "OFF_TIME": "0",
-                "LOG_LEVEL": "info"
+                "LOG_LEVEL": "info",
+                "INTERLEAVE": "4"
             },
             "args": [],
             "cwd": "${workspaceFolder}/mtapiclient",

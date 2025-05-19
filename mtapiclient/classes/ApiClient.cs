@@ -16,18 +16,12 @@ public class ApiClient
     private int api_port {get; set;}
     private string api_protocol {get; set;}
     private string api_suffix {get; set;}
-    private string wh_host {get; set;}
-    private int wh_port {get; set;}
-    private string wh_protocol {get; set;}
-    private string wh_suffix {get; set;}
     private int time_period {get; set;}
     private AppSettings config {get; set;}
     public JObject vars {get; set;}
     public int on_time {get; set;}
     public int off_time {get; set;}
-    private bool isConnected {get; set;}
-    private object webhook_queue {get; set;}
-    private object logger {get; set;}
+    public int interleave {get; set;}
 
     public ApiClient(JObject vars, AppSettings config)
     {
@@ -35,8 +29,7 @@ public class ApiClient
         // Initialize internal variables
         //
         this.vars = vars;
-        this.isConnected = false;
-        this.config = config;   
+        this.config = config;
         //
         // Read Environment variables
         //
@@ -46,16 +39,13 @@ public class ApiClient
         this.api_suffix = CommonUtilities.GetEnvVariableWithDefault(config.env.api_suffix, config.app.api_suffix);
         this.api_port = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.api_port, config.app.api_port));
         this.time_period = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.time_period, config.app.time_period));
-        this.wh_host =  CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_host, config.app.webhook_host);
-        this.wh_protocol = CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_protocol, config.app.webhook_protocol);
-        this.wh_suffix = CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_suffix, config.app.webhook_suffix);
-        this.wh_port = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.webhook_port, config.app.webhook_port));
         this.on_time = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.on_time, config.app.on_time));
         int min_on_time = Convert.ToInt32(config.app.on_time);
-        if (this.on_time < min_on_time) {this.on_time = Convert.ToInt32(config.app.on_time);}
+        if (this.on_time < min_on_time) { this.on_time = Convert.ToInt32(config.app.on_time); }
         this.off_time = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.off_time, config.app.off_time));
         int min_off_time = Convert.ToInt32(config.app.off_time);
-        if (this.off_time < min_off_time) {this.off_time = Convert.ToInt32(config.app.off_time);}
+        if (this.off_time < min_off_time) { this.off_time = Convert.ToInt32(config.app.off_time); }
+        this.interleave = Convert.ToInt32(CommonUtilities.GetEnvVariableWithDefault(config.env.interleave, config.app.interleave));
         //
         // let's read the variables file!
         //
