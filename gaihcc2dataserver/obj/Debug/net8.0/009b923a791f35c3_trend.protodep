@@ -1,0 +1,2 @@
+obj/Debug/net8.0/TrendFileService/Protos/Trend.cs \
+obj/Debug/net8.0/TrendFileService/Protos/TrendGrpc.cs: TrendFileService/Protos/trend.proto

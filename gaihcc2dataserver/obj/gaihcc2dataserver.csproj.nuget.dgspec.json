@@ -1,0 +1,90 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/sensia/mtapi/gaihcc2dataserver/gaihcc2dataserver/gaihcc2dataserver.csproj": {}
+  },
+  "projects": {
+    "/home/sensia/mtapi/gaihcc2dataserver/gaihcc2dataserver/gaihcc2dataserver.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/sensia/mtapi/gaihcc2dataserver/gaihcc2dataserver/gaihcc2dataserver.csproj",
+        "projectName": "gaihcc2dataserver",
+        "projectPath": "/home/sensia/mtapi/gaihcc2dataserver/gaihcc2dataserver/gaihcc2dataserver.csproj",
+        "packagesPath": "/home/sensia/.nuget/packages/",
+        "outputPath": "/home/sensia/mtapi/gaihcc2dataserver/gaihcc2dataserver/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/sensia/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Grpc.AspNetCore": {
+              "target": "Package",
+              "version": "[2.71.0, )"
+            },
+            "Grpc.AspNetCore.Server.Reflection": {
+              "target": "Package",
+              "version": "[2.71.0, )"
+            },
+            "Grpc.Reflection": {
+              "target": "Package",
+              "version": "[2.71.0, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.15, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[8.1.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.115/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

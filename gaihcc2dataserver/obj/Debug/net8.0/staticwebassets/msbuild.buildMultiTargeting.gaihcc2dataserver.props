@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/gaihcc2dataserver.props" />
+</Project>

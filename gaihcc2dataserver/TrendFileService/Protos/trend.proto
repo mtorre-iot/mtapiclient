@@ -1,0 +1,105 @@
+syntax = "proto3";
+option csharp_namespace = "TrendFileService";
+
+package trend;
+
+enum TrendType {
+  UnsupportedTrend= 0;
+  Baseline = 1;
+  Deviation = 2;
+}
+
+enum WorkflowType {
+  NotDefined = 0;
+  SingleBaseline = 1;
+  SingleDeviation = 2;
+  RepeatedBaseline = 3;
+  RepeatedDeviation = 4;
+  BaselineDeviationRepeatedBaseline= 5;
+  DeviationRepeatedBaseline=6;
+  AlternateBaselineDeviation=7;
+  UnsupportedWorkflow = 8;
+}
+
+
+message Empty {}
+
+
+// The trend service definition.
+service Trend {
+  rpc GetIdentity (Empty) returns (IdentityResponse);
+  
+  rpc LoadTrend (LoadTrendRequest) returns (LoadTrendResponse);
+  rpc SelectWorkflow (SelectWorkflowRequest) returns (SelectWorkflowResponse);  
+  rpc GetSelections(Empty) returns (SelectionsResponse);
+  
+  rpc StartDataStream (StartStreamRequest) returns (stream DataStreamResponse); 
+  rpc StopDataStream (Empty) returns (StopStreamResponse); 
+}
+
+
+// The response message containing device settings.
+message IdentityResponse {
+  bool Result = 1;
+  uint32 VendorID = 2;
+  uint32 DeviceType = 3;
+  uint32 ProductCode  = 4;
+}
+
+message LoadTrendRequest {
+  TrendType TrendType = 1;
+  string FileName = 2;  
+}
+
+message LoadTrendResponse {
+  bool Result = 1;
+  TrendType TrendType = 2;
+  uint32 TrendsCount = 3;  
+}
+
+message TrendSelectionResponse {
+  bool Result = 1;
+  TrendType TrendType = 2;
+  string FileName = 3;  
+  uint32 TrendsCount = 4;  
+}
+
+message SelectWorkflowRequest {
+  WorkflowType Workflow = 1;
+}
+
+message SelectWorkflowResponse{
+  bool Result = 1;
+  WorkflowType Workflow = 2;
+}
+
+message SelectionsResponse{
+    bool Result = 1;
+    string BaselineName = 2;
+    uint32 BaselineTrendsCount = 3;  
+    string DeviationName = 4;  
+    uint32 DeviationTrendsCount = 5;
+    WorkflowType Workflow = 6;
+}
+
+message DataStreamResponse {
+    bool Result = 1;
+	WorkflowType WorkflowType = 2;
+    repeated DataItem items = 3;
+}
+message DataItem {
+    double OutputFrequency = 1;
+    double CurrentA= 2;
+    double CurrentB= 3;
+    double CurrentC= 4;
+    string TimeStamp = 5;
+}
+
+message StartStreamRequest {
+    int32 DelayMilliSec =2;
+}
+
+message StopStreamResponse{
+  bool Result = 1;
+}
+

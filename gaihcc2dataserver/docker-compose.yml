@@ -1,0 +1,43 @@
+---
+services:
+  hcc2sim:
+    image: gaihcc2dataserver:0.0.0
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: 3
+    container_name: gaihcc2dataserver
+    read_only: true
+    labels:
+      com.sensiaglobal.image.config_manager_reg_name: gaihcc2dataserver
+    restart: on-failure  
+    networks:
+      - network1
+    ports:
+      - '5001:5001' 
+      - '5212:5212'
+    environment:
+      CLIENT: "Client1"
+      API_HOST: "mtApi"
+      API_SUFFIX: "api/v1"
+      API_PROTOCOL: "http"
+      API_PORT: 5236
+      TIME_PERIOD: 10
+      ON_TIME: 0
+      OFF_TIME: 0
+      INTERLEAVE: 1
+      LOG_LEVEL: "info"
+      TREND_PORT_ANYIP: 5001
+      TREND_PORT: 5001
+      DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE: false
+      TREND_URL: "http://gaihcc2dataserver:5001"
+    tmpfs:
+      - /tmp:uid=5678,gid=5678
+
+networks:
+  network1:
+    name: edgenet
+    external: true
+
+...

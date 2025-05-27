@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/mtapiclient/bin/Debug/net8.0/mtapiclient.dll",
+            "program": "${workspaceFolder}/gaihcc2dataserver/bin/Debug/net8.0/gaihcc2dataserver.dll",
             "env": {
                 "CLIENT": "Client1X",
                 "API_HOST": "192.168.1.41",
@@ -20,12 +20,21 @@
                 "ON_TIME": "20000",
                 "OFF_TIME": "0",
                 "LOG_LEVEL": "info",
-                "INTERLEAVE": "4"
+                "INTERLEAVE": "1",
+                "TREND_PORT": "5001",
+                "TREND_PORT_ANYIP": "5001",
+                "DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE": "false",
+                "TREND_URL":"http://localhost:5001"
             },
             "args": [],
-            "cwd": "${workspaceFolder}/mtapiclient",
+            "cwd": "${workspaceFolder}/gaihcc2dataserver",
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "logging":{
+                "moduleLoad": false,
+                "engineLogging": false,
+                "exceptions": false
+            }
         },
         {
             "name": ".NET Core Attach",

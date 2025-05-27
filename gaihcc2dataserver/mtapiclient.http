@@ -1,0 +1,6 @@
+@gaihcc2dataserver_HostAddress = http://localhost:5001
+
+GET {{gaihcc2dataserver_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
