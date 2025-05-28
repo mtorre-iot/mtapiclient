@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("gaihcc2dataserver")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0fd96082782eede916c5599406c6369258f1806e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0655594602fe8824800d60cfdbe12923238d51ac")]
 [assembly: System.Reflection.AssemblyProductAttribute("gaihcc2dataserver")]
 [assembly: System.Reflection.AssemblyTitleAttribute("gaihcc2dataserver")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

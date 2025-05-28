@@ -31,29 +31,19 @@ namespace gaihcc2dataserver
 
             // Get all topic / tags pairs subscribed
 
-            List<(string, string)> topicTagPairs = CommonUtilities.GetTopicTagPairsFromSubscription(this.vars);
+            List<(string, string, int)> topicTagPairs = CommonUtilities.GetTopicTagPairsFromSubscription(this.vars);
             //
             // Create a stream buffer for each pair
             // Limit only to the ones that include "streamData" in its topic
             //
-            foreach (var (topic, tag) in topicTagPairs)
+            foreach (var (topic, tag, phase) in topicTagPairs)
             {
                 if (topic.Contains("streamData") == true)
                 {
-                    var gaibuffer = new CircularBuffer<double>(topic, tag, config.system.buffer_size);  
+                    var gaibuffer = new CircularBuffer<double>(topic, tag, config.system.buffer_size, phase);  
                     GAIBufferArray.Add((topic, tag), gaibuffer);
                 }
             }
-            //
-            // SPECIAL:  ADD PSEUDO SIGNALS (DERIVED FROM H/W SIGNALS)
-            //
-            // var ps_topic = "pseudo.streamData.diagnostics.this.io.0.eu.fastAnalog|.";
-            // var ps_tag2 = "pseudo_ch2";
-            // var ps_tag3 = "pseudo_ch3";
-            // var ps_gaibuffer2 = new CircularBuffer<double>(ps_topic, ps_tag2, config.system.buffer_size);  
-            // GAIBufferArray.Add((ps_topic, ps_tag2), ps_gaibuffer2);
-            // var ps_gaibuffer3 = new CircularBuffer<double>(ps_topic, ps_tag3, config.system.buffer_size);  
-            // GAIBufferArray.Add((ps_topic, ps_tag3), ps_gaibuffer3);
 
             // Start consumer
 

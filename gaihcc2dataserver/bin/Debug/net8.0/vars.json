@@ -5,7 +5,18 @@
                "tags": {
                     "s_t1_var1": {
                         "name": "ch1.",
-                        "type": "Float"
+                        "type": "Float",
+                        "phase": 0
+                    },
+                    "s_t1_var2": {
+                        "name": "ch2.",
+                        "type": "Float",
+                        "phase": 120
+                    },
+                    "s_t1_var3": {
+                        "name": "ch3.",
+                        "type": "Float",
+                        "phase": 240
                     }
                 },
                 "callback" : "http://192.168.1.71:5212/webhook/v1/Push"

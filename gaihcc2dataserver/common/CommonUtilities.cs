@@ -210,9 +210,10 @@ namespace gaihcc2dataserver.common
             return topicObjects;
         }
 
-        public static List<(string, string)> GetTopicTagPairsFromSubscription(JObject vars)
+        public static List<(string, string, int)> GetTopicTagPairsFromSubscription(JObject vars)
         {
-            List<(string, string)> topicTagPairs = new List<(string, string)>();
+            List<(string, string, int)> topicTagPairs = new List<(string, string, int)>();
+
             JObject subscriptions = (JObject)vars["Model"]["subscriptions"];
             List<(string, JObject)> subscriptionList = CommonUtilities.GetJsonObjects(subscriptions);
             foreach (var (topicName, sub) in subscriptionList)
@@ -221,7 +222,18 @@ namespace gaihcc2dataserver.common
                 foreach (var (tn, tag) in tagList)
                 {
                     var tagName = (string)tag["name"];
-                    topicTagPairs.Add((topicName, tagName));
+                    int phase;
+
+                    if (tag["phase"] != null && tag["phase"].Type != JTokenType.Null)
+                    {
+                        phase = (int)tag["phase"];
+                    }
+                    else
+                    {
+                        phase = 0;
+                    }
+
+                    topicTagPairs.Add((topicName, tagName, phase));
                 }
             }
             return topicTagPairs;

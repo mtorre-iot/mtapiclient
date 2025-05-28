@@ -1,21 +1,25 @@
+using System.Runtime.InteropServices;
+
 namespace gaihcc2dataserver.classes;
 public class CircularBuffer<T>
 {
     private readonly T[] buffer;
     private int head;
     private int tail;
+    private int displacement;
     private bool isFull;
     private readonly int capacity;
     private readonly object syncLock = new object();
     public string topic { get; set; }
     public string channelName { get; set; }
 
-    public CircularBuffer(string topic, string channelName, int capacity)
+    public CircularBuffer(string topic, string channelName, int capacity, int phase = 0)
     {
         this.topic = topic;
         this.channelName = channelName;
         this.capacity = capacity;
         buffer = new T[capacity];
+        this.displacement = Convert.ToInt32(Convert.ToSingle(phase)/360.0 * 0.020 * 5000);  //MAGIC
         head = 0;
         tail = 0;
         isFull = false;
@@ -23,7 +27,14 @@ public class CircularBuffer<T>
 
     private void Enqueue(T item)
     {
-        buffer[tail] = item;
+        if (this.displacement < 0 || this.displacement >= capacity)
+        {
+            throw new Exception($"CircularBuffer - Displacement must be within buffer capacity: {capacity}");
+        }
+        int index = (tail + this.displacement) % capacity;
+
+        buffer[index] = item;
+
         tail = (tail + 1) % capacity;
 
         if (isFull)

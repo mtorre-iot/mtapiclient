@@ -376,8 +376,8 @@ namespace TrendFileService.Services
                 {
                     OutputFrequency = frequency, // + (random.Next(-100, 100) / 10000.0),
                     CurrentA = all_values[0][i],
-                    CurrentB = all_values[0][i],
-                    CurrentC = all_values[0][i],
+                    CurrentB = all_values[1][i],
+                    CurrentC = all_values[2][i],
                     TimeStamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ")
                 };
                 trend.Add(dataItem);
@@ -445,9 +445,9 @@ namespace TrendFileService.Services
             try
             {
 
-                Logger.write(logLevel.warning, $"Collecting High speed data from HCC2.");
-                var trends = GetSignalsFromHCC2(51, 2);
-                SaveDataInfile(trends);
+                Logger.write(logLevel.info, $"Collecting High speed data from HCC2.");
+                var trends = GetSignalsFromHCC2(50, 2);  //MAGIC
+                //SaveDataInfile(trends); //MAGIC
                 return trends;
                 //return GenerateSineSignal(50, 2);
             }
