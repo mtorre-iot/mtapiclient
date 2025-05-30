@@ -15,11 +15,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 RUN groupadd -g 1000 appuser && useradd -d /app -g 1000 -M -N -s /sbin/nologin -u 1000 appuser
 
 WORKDIR /app
+
 COPY --from=build --chown=appuser:appuser /app/publish .
 COPY --chown=appuser:appuser appsettings.json /app
 
 USER root:root
 RUN install -o appuser -g appuser -d -m 0755 /temp
+RUN install -o appuser -g appuser -d -m 0755 /app/data
 
 USER appuser:appuser
 VOLUME ["/temp"]

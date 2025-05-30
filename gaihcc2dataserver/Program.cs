@@ -2,7 +2,6 @@ using gaihcc2dataserver.classes;
 using gaihcc2dataserver;
 using System.Collections.Concurrent;
 using gaihcc2dataserver.common;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using TrendFileService.Services;
 
 Host.CreateDefaultBuilder(args)
@@ -94,7 +93,7 @@ Task<int> tsk = Task.Run(() => {
 //
 //initialize trend service load from environment variables if provided
 //
-TrendService.InitEnvironment(zmqTask.GAIBufferArray);
+TrendService.InitEnvironment(zmqTask.GAIBufferArray, config);
 //
 // Configure the HTTP request pipeline.
 //

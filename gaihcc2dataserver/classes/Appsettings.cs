@@ -20,6 +20,8 @@ namespace gaihcc2dataserver.classes
         public string log_level { get; set; }
         public string variable_file { get; set; }
         public int buffer_size { get; set; }
+        public string data_file { get; set; }
+        public bool data_file_enabled { get; set; }
     }
     public class AppParams
     {

@@ -34,22 +34,13 @@ namespace TrendFileService.Services
 
         private static Stopwatch sw = new Stopwatch();
         private static long previousStopWatchMilliSeconds = 0;
-        /*
-        private static string? Baseline { get; set; } = null;
-        private static string? Deviation { get; set; } = null;
-
-        private static string? DataDirectory { get; set; }
-
-        private static readonly List<List<DataItem>> BaselineTrends = [];
-        private static readonly List<List<DataItem>> DeviationTrends = [];
-        */
-
         private static WorkflowType Workflow { get; set; } = WorkflowType.NotDefined;
         private readonly object _lockWorklow = new();
 
         private static bool interruptStream { get; set; } = false;
         private readonly object _lockInterruptStream = new();
         private static Dictionary<(string, string), CircularBuffer<double>> gaiBufferArray;
+        private static AppSettings config;
 
         public static void InitEnvironment()
         {
@@ -58,44 +49,21 @@ namespace TrendFileService.Services
                 sw.Start();
             }
         }
-        public static void InitEnvironment(Dictionary<(string, string), CircularBuffer<double>> gaibar)
+        public static void InitEnvironment(Dictionary<(string, string), CircularBuffer<double>> gaibar, AppSettings cfg)
         {
             if (!sw.IsRunning)
             {
                 sw.Start();
             }
             gaiBufferArray = gaibar;
+            config = cfg;
 
             Workflow = WorkflowType.RepeatedBaseline;
-            /*
-            //setting initial data folder
-            SetDataDirectory();
-            Baseline = Helpers.GetEnvironmentVariable("TREND_LOAD_BASELINE", Baseline);
-            Deviation= Helpers.GetEnvironmentVariable("TREND_LOAD_DEVIATION", Deviation);
-            var workflow = Helpers.GetEnvironmentVariable("TREND_LOAD_WORKFLOW","not-defined");
-            Workflow = workflow?.ToWorklow() ?? WorkflowType.NotDefined;
-            LoadFile(Baseline, TrendType.Baseline);
-            LoadFile(Deviation, TrendType.Deviation);
-            */
         }
         public TrendService(ILogger<TrendService>? logger)
         {
             _logger = logger;
-            /*
-            _logger?.LogInformation("Data directory is {DATA}",DataDirectory);
-            */
         }
-        /*
-        private static void SetDataDirectory()
-        {
-            var currentDir = Directory.GetCurrentDirectory();
-            var parentDir = new DirectoryInfo(currentDir);
-            var parent = parentDir.Parent != null ? parentDir.FullName : currentDir;
-
-            DataDirectory = Helpers.GetEnvironmentVariable("TREND_DATA_LOCATION", Path.Join(parent, "data"));
-        }
-        */
-
         // trend.proto
         public override Task<IdentityResponse> GetIdentity(Empty request, ServerCallContext context)
         {
@@ -113,168 +81,10 @@ namespace TrendFileService.Services
             });
         }
 
-        /*
-        private static bool DoesInputContainsNumbers(string input) => !string.IsNullOrWhiteSpace(input) &&
-            input.Split(',')
-            .ToList()
-            .TrueForAll(x => double.TryParse(x, out _));
-        */
-        /*
-        private static void LoadFile(string? trendName, TrendType trendType)
-        {
-            if (trendName is null)
-            {
-                return;
-            }
-            var resourceFile = Path.Join(DataDirectory, trendName + ".csv");
-            if (!File.Exists(resourceFile))
-            {
-                return;
-            }
-            var trends = (trendType == TrendType.Baseline) ? BaselineTrends : DeviationTrends;
-            trends.Clear();
-            try
-            {
-                const int ExpectedColumnsInDataPoint = 4;
-                const int TrendDataItemsCount = 4096;
-
-                var allLines = File.ReadAllLines(resourceFile);
-                var trend = new List<DataItem>(TrendDataItemsCount);
-
-                foreach (var line in allLines)
-                {
-                    var lineToProcess = line.Trim().TrimEnd(',');
-                    if (!DoesInputContainsNumbers(lineToProcess))
-                    {
-                        continue;
-                    }
-                    // Split the line by commas
-                    var splitLine = lineToProcess.Split(',');
-                    if (splitLine.Length < ExpectedColumnsInDataPoint)
-                    {
-                        continue;
-                    }
-                    // Add the values to the dictionary
-                    var dataItem = new DataItem
-                    {
-                        OutputFrequency = double.Parse(splitLine[0]),
-                        CurrentA = double.Parse(splitLine[1]),
-                        CurrentB = double.Parse(splitLine[2]),
-                        CurrentC = double.Parse(splitLine[3]),
-                        TimeStamp = splitLine.Length > 4 && !string.IsNullOrEmpty(splitLine[4]) ? splitLine[4] : DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"),
-                    };
-                    trend.Add(dataItem);
-                    if (trend.Count == TrendDataItemsCount)
-                    {
-                        trends.Add(trend);
-                        trend = new List<DataItem>(TrendDataItemsCount);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                //ignore exception for now
-            }
-        }
-
-        */
-
         // trend.proto
         public override Task<LoadTrendResponse> LoadTrend(LoadTrendRequest request, ServerCallContext context)
         {
             _logger?.LogInformation("LoadTrend: {ID}", JsonSerializer.Serialize(request));
-            /*
-            _logger?.LogInformation("Request to set asset {ID}", request.FileName);
-
-            var resourceFile = Path.Join(DataDirectory, request.FileName + ".csv");
-            _logger?.LogInformation("Full to file path {Path}", resourceFile);
-            if (!File.Exists(resourceFile))
-            {
-                return Task.FromResult(new LoadTrendResponse
-                {
-                    Result = false,
-                    TrendType = request.TrendType,
-                    TrendsCount = 0
-                });
-            }
-
-            //point to one of the built-in lists
-            var trends = (request.TrendType == TrendType.Baseline) ? BaselineTrends : DeviationTrends;
-            trends.Clear();
-
-            _logger?.LogInformation("Current baseline Trends count = {BLcount}, Deviations Count={DCount}", BaselineTrends.Count, DeviationTrends.Count);
-            //set the new name of the loaded resource
-            if (request.TrendType == TrendType.Baseline)
-            {
-                Baseline = request.FileName;
-            } else
-            {
-                Deviation = request.FileName;
-            }
-
-            try
-            {
-                const int ExpectedColumnsInDataPoint = 4;
-                const int TrendDataItemsCount = 4096;
-
-                var allLines = File.ReadAllLines(resourceFile);
-                var trend = new List<DataItem>(TrendDataItemsCount);
-
-                _logger?.LogInformation("Count of lines is  {length}", allLines.Length);
-                foreach (var line in allLines)
-                {
-                    var lineToProcess = line.Trim().TrimEnd(',');
-                    if (!DoesInputContainsNumbers(lineToProcess))
-                    {
-                        continue;
-                    }
-                    // Split the line by commas
-                    var splitLine = lineToProcess.Split(',');
-                    if (splitLine.Length < ExpectedColumnsInDataPoint)
-                    {
-                        continue;
-                    }
-                    // Add the values to the dictionary
-                    var dataItem = new DataItem
-                    {
-                        OutputFrequency = double.Parse(splitLine[0]),
-                        CurrentA = double.Parse(splitLine[1]),
-                        CurrentB = double.Parse(splitLine[2]),
-                        CurrentC = double.Parse(splitLine[3]),
-                        TimeStamp = splitLine.Length > 4 && !string.IsNullOrEmpty(splitLine[4]) ? splitLine[4] : DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"),
-                    };
-                    trend.Add(dataItem);
-                    if (trend.Count == TrendDataItemsCount)
-                    {
-                        trends.Add(trend);
-                        trend = new List<DataItem>(TrendDataItemsCount);
-                    }
-                    if (context.CancellationToken.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                }
-
-                return Task.FromResult(new LoadTrendResponse
-                {
-                    Result = true,
-                    TrendType = request.TrendType,
-                    TrendsCount = request.TrendType == TrendType.Baseline ? (uint)BaselineTrends.Count : (uint)DeviationTrends.Count,
-                });
-
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError("Exception {Message}", ex.Message);
-            }
-            return Task.FromResult(new LoadTrendResponse
-            {
-                Result = false,
-                TrendType = request.TrendType,
-                TrendsCount = 0
-            });
-
-        */
             return Task.FromResult(new LoadTrendResponse
             {
                 Result = true,
@@ -312,18 +122,6 @@ namespace TrendFileService.Services
                 DeviationTrendsCount = (uint)1,
                 Workflow = Workflow
             });
-            /*
-            _logger?.LogInformation("Baseline name {ID}, deviation name {DEV}, workflowe name {Workflow}", Baseline, Deviation, Workflow);
-            return Task.FromResult(new SelectionsResponse
-            {
-                Result = true,
-                BaselineName = Baseline ?? string.Empty,
-                BaselineTrendsCount = (uint)BaselineTrends.Count,
-                DeviationName = Deviation ?? string.Empty,
-                DeviationTrendsCount = (uint)DeviationTrends.Count,
-                Workflow = Workflow
-            });
-            */
         }
 
         // trend.proto
@@ -428,15 +226,22 @@ namespace TrendFileService.Services
 
         private async void SaveDataInfile(List<List<DataItem>> dataSet)
         {
-            using (StreamWriter stw = new StreamWriter("data.csv"))
+            try
             {
-                foreach (var data in dataSet)
+                using (StreamWriter stw = new StreamWriter(config.system.data_file)) // MAGIC
                 {
-                    foreach (var item in data)
+                    foreach (var data in dataSet)
                     {
-                        stw.WriteLine($" {item.CurrentA}, {item.CurrentB}, {item.CurrentC}");
+                        foreach (var item in data)
+                        {
+                            stw.WriteLine($" {item.CurrentA}, {item.CurrentB}, {item.CurrentC}");
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.write(logLevel.error, $"Error tryting to save data. Error: {e.Message}");
             }
         }
 
@@ -447,7 +252,10 @@ namespace TrendFileService.Services
 
                 Logger.write(logLevel.info, $"Collecting High speed data from HCC2.");
                 var trends = GetSignalsFromHCC2(50, 2);  //MAGIC
-                //SaveDataInfile(trends); //MAGIC
+                if (config.system.data_file_enabled == true)
+                {
+                    SaveDataInfile(trends);
+                }
                 return trends;
                 //return GenerateSineSignal(50, 2);
             }
